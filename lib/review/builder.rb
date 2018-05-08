@@ -437,10 +437,17 @@ module ReVIEW
       c = target_name
       dir = File.join(@book.imagedir, c)
       FileUtils.mkdir_p(dir)
+
+      if command == 'plantuml'
+        image_ext = 'eps'
+      end
+
       file = "#{id}.#{image_ext}"
       file_path = File.join(dir, file)
+      temp_path = File.join(dir, "#{id}.tmp")
 
       line = self.unescape(lines.join("\n"))
+      File.open(temp_path, 'w') { |f| f.write(line) }
       cmds = {
         graphviz: "echo '#{line}' | dot -T#{image_ext} -o#{file_path}",
         gnuplot: %Q(echo 'set terminal ) +
@@ -448,7 +455,8 @@ module ReVIEW
         %Q( set output "#{file_path}"\n#{line}' | gnuplot),
         blockdiag: "echo '#{line}' " +
         "| blockdiag -a -T #{image_ext} -o #{file_path} /dev/stdin",
-        aafigure: "echo '#{line}' | aafigure -t#{image_ext} -o#{file_path}"
+        aafigure: "echo '#{line}' | aafigure -t#{image_ext} -o#{file_path}",
+        plantuml: "java -jar ./plantuml.jar -t#{image_ext} #{temp_path}"
       }
       cmd = cmds[command.to_sym]
       warn cmd
