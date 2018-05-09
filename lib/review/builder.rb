@@ -456,7 +456,7 @@ module ReVIEW
         blockdiag: "echo '#{line}' " +
         "| blockdiag -a -T #{image_ext} -o #{file_path} /dev/stdin",
         aafigure: "echo '#{line}' | aafigure -t#{image_ext} -o#{file_path}",
-        plantuml: "java -jar ./plantuml.jar -t#{image_ext} #{temp_path}"
+        plantuml: "java -jar ./plantuml.jar -t#{image_ext} -charset UTF-8 #{temp_path}"
       }
       cmd = cmds[command.to_sym]
       warn cmd
